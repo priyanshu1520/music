@@ -3,7 +3,7 @@ const route=express.Router();
 const User=require('./../models/user')
 const {jwtAuthMiddleware,generateToken}=require('./../jwt')
 route.post('/signup',async(req,res)=>{
-    try{
+    try{        
         const data=req.body
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
@@ -87,5 +87,8 @@ route.get('/profile',jwtAuthMiddleware,async(req,res)=>{
     }
 
 })
+
+
+
 
 module.exports=route
