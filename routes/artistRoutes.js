@@ -41,6 +41,29 @@ route.get('/getSong',jwtAuthMiddleware,async (req, res) => {
     }
 });
 
+route.put('/updateSong',jwtAuthMiddleware,async (req, res) => {
+    const userId=req.user.id;
+    const user=await User.findById(userId);
+    if (user.role==='listener') {
+        return res.status(403).json({error:"You are not authorized to update a song" });
+    }
+    try{
+        const {currentname,newname}=req.body;
+        if(!currentname||!newname){
+            return res.status(400).json({error:'Both currentname and newname are required'});
+        }
+        const song=await Song.findOne({songName:currentname});
+        if(!song){
+            return res.status(404).json({error:'Song not found'});
+        }
+        song.songName=newname;
+        await song.save();
+        res.status(200).json({message:"Song updated"});
+    } catch (err) {
+        console.error("Error updating song:", err);
+        res.status(500).json({error:"Internal server error"});
+    }
+});
 
 
 module.exports = route;
