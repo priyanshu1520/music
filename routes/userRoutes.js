@@ -25,10 +25,6 @@ route.post('/signup',async(req,res)=>{
         res.status(500).json({err:"data not saved"})
     }
   })
-
-
-
-
 route.post('/login',async(req,res)=>{
     try{
         const {username,password}=req.body;
@@ -72,9 +68,6 @@ route.put('/profile/password',jwtAuthMiddleware,async(req,res)=>{
         res.status(500).json({err:"internal server error"})
     }
 })
-
-
-
 route.get('/profile',jwtAuthMiddleware,async(req,res)=>{
     try{
         const userData=req.user

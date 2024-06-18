@@ -24,8 +24,6 @@ route.post('/postSong', jwtAuthMiddleware, async (req, res) => {
     }
 });
 
-
-
 route.get('/getSong',jwtAuthMiddleware,async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -65,6 +63,29 @@ route.put('/updateSong',jwtAuthMiddleware,async (req, res) => {
     }
 });
 
+route.delete('/deleteSong',jwtAuthMiddleware,async (req, res) => {
+    const userId=req.user.id;
+    const user=await User.findById(userId);
+    if(user.role==='listener'){
+        return res.status(403).json({error:"You are not authorized to delete a song"});
+    }
+    try{
+        const {songName}=req.body;
+        if(!songName){
+            return res.status(400).json({error:'songName is required'});
+        }
+        const song = await Song.findOne({ name: songName });
+
+        if(!song){
+            return res.status(404).json({error:'Song not found'});
+        }
+        await Song.deleteOne({ _id: song._id });
+        res.status(200).json({message:"Song deleted"});
+    }catch(err){
+        console.error("Error deleting song:",err);
+        res.status(500).json({error:"Internal server error"});
+    }
+});
 
 module.exports = route;
 
